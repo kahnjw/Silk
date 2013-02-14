@@ -4,15 +4,14 @@ abstract class Formula {
 
 	def compile():Python = {
 	  def compileHelper(f: Formula, p: Python):Python = f match {
-	    
 	  	case Model(title, attrs) => {
 	  	  title match {
 	  	    case Title(s) => {
 	  	      p.sendTitle(s);
 	  	      for (attr <- attrs) {
 	  	        compileHelper(attr, p)
+	  	        p
 	  	      }
-	  	      p
 	  	    }
 	  	    case _ => throw new Error("Type mismatch in compile -> Model")
 	  	  }
@@ -50,9 +49,11 @@ abstract class Formula {
 	  	      case _ => throw new Error("Type mismatch in compile -> Attr -> Float")
 	  	    }
 	  	  }
-	  	  case OneToOne(title) => p
-	  	  case OneToMany(title) => p
-	  	  case ManyToMany(title) => p
+	  	  case Text(title, length) => throw new Error("Text not implemented")
+	  	  case OneToOne(title, rm) => throw new Error("OneToOne not implemented")
+	  	  case OneToMany(title, rm) => throw new Error("OneToMany not implemented")
+	  	  case ManyToMany(title, rm) => throw new Error("ManyToMany not implemented")
+	  	  case _ => throw new Error("Type mismatch in compile -> Attr")
 	  	}
 	  }
 	  var p = new Python();
@@ -62,12 +63,14 @@ abstract class Formula {
 	}
 }
 case class Model(title: Title, attrs: List[Attr]) extends Formula
+case class ReferenceModel(title: Title) extends Formula
 case class Attr() extends Formula
 case class Integer(title: Title) extends Attr
 case class Boolean(title: Title) extends Attr
 case class Float(title: Title) extends Attr
-case class OneToOne(title: Title) extends Attr
-case class OneToMany(title: Title) extends Attr
-case class ManyToMany(title: Title) extends Attr
+case class Text(title: Title, length: Int) extends Attr
+case class OneToOne(title: Title, rm: ReferenceModel) extends Attr
+case class OneToMany(title: Title, rm: ReferenceModel) extends Attr
+case class ManyToMany(title: Title, rm: ReferenceModel) extends Attr
 case class Title(text: String)
 
