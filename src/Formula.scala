@@ -4,14 +4,21 @@ abstract class Formula {
 
 	def compile():Python = {
 	  def compileHelper(f: Formula, p: Python):Python = f match {
+	    case Package(Title(string), models) => {
+	      p.sendPackage(string);
+	      for(model <- models) {
+	        compileHelper(model, p);
+	      }
+	      p;
+	    }
 	  	case Model(title, attrs) => {
 	  	  title match {
 	  	    case Title(s) => {
 	  	      p.sendTitle(s);
 	  	      for (attr <- attrs) {
-	  	        compileHelper(attr, p)
-	  	        p
+	  	        compileHelper(attr, p);   
 	  	      }
+	  	      p;
 	  	    }
 	  	    case _ => throw new Error("Type mismatch in compile -> Model")
 	  	  }
@@ -34,9 +41,9 @@ abstract class Formula {
 	  		title match {
 	  		  case Title(string) => {
 	  		    p.sendBool(string);
-	  		    p
+	  		    p;
 	  		  }
-	  		  case _ => throw new Error("Type mismatch in compile -> Attr -> Bool")
+	  		  case _ => throw new Error("Type mismatch in compile -> Attr -> Bool");
 	  		}
 	  	  }
 	  	  /* CASE IS FLOAT ***/
@@ -44,24 +51,57 @@ abstract class Formula {
 	  	    title match {
 	  	      case Title(string) => {
 	  	        p.sendFloat(string);
-	  	        p
+	  	        p;
 	  	      }
-	  	      case _ => throw new Error("Type mismatch in compile -> Attr -> Float")
+	  	      case _ => throw new Error("Type mismatch in compile -> Attr -> Float");
 	  	    }
 	  	  }
-	  	  case Text(title, length) => throw new Error("Text not implemented")
-	  	  case OneToOne(title, rm) => throw new Error("OneToOne not implemented")
-	  	  case OneToMany(title, rm) => throw new Error("OneToMany not implemented")
-	  	  case ManyToMany(title, rm) => throw new Error("ManyToMany not implemented")
+	  	  case Text(title, length) => {
+	  	    title match {
+	  	      case Title(string) => {
+	  	        p.sendText(string, length);
+	  	        p;
+	  	      }
+	  	      case _ => throw new Error("Type mismatch in compile -> Attr -> Text");
+	  	    }
+	  	  }
+	  	  case OneToOne(title, rm) => {
+	  	    (title, rm) match {
+	  	      case (Title(modelString), ReferenceModel(Title(referenceString))) => {
+	  	        p.sendOneToOne(modelString, referenceString);
+	  	        p;
+	  	      }
+	  	      case _ => throw new Error("Type mismatch in compile -> Attr -> OneToOne");
+	  	    }
+	  	  }
+	  	  case OneToMany(title, rm) => {
+	  	    (title, rm) match {
+	  	      case (Title(modelString), ReferenceModel(Title(referenceString))) => {
+	  	        p.sendOneToMany(modelString, referenceString);
+	  	        p;
+	  	      }
+	  	      case _ => throw new Error("Type mismatch in compile -> Attr -> OneToOne");
+	  	    }
+	  	  }
+	  	  case ManyToMany(title, rm) => {
+	  	    (title, rm) match {
+	  	      case (Title(modelString), ReferenceModel(Title(referenceString))) => {
+	  	        p.sendManyToMany(modelString, referenceString);
+	  	        p;
+	  	      }
+	  	      case _ => throw new Error("Type mismatch in compile -> Attr -> OneToOne");
+	  	    }
+	  	  }
 	  	  case _ => throw new Error("Type mismatch in compile -> Attr")
 	  	}
 	  }
 	  var p = new Python();
 	  compileHelper(this, p);
 	  p.printer();
-	  p
+	  p;
 	}
 }
+case class Package(title: Title, models: List[Model]) extends Formula
 case class Model(title: Title, attrs: List[Attr]) extends Formula
 case class ReferenceModel(title: Title) extends Formula
 case class Attr() extends Formula
