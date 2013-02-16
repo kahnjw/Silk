@@ -1,5 +1,7 @@
 import scala.collection.mutable.ListBuffer
 
+package silk {
+  
 abstract class Formula {
 
 	def compile():Python = {
@@ -34,7 +36,6 @@ abstract class Formula {
 	  	      }
 	  	      case _ => throw new Error("Type mismatch in compile -> Attr -> Int")
 	  	    }
-	  	    // p;
 	  	  }
 	  	  /* CASE IS BOOLEAN ***/
 	  	  case Boolean(title) => {
@@ -100,17 +101,17 @@ abstract class Formula {
 	  p.printer();
 	  p;
 	}
+  }
+  case class Package(title: Title, models: List[Model]) extends Formula
+  case class Model(title: Title, attrs: List[Attr]) extends Formula
+  case class ReferenceModel(title: Title) extends Formula
+  case class Attr() extends Formula
+  case class Integer(title: Title) extends Attr
+  case class Boolean(title: Title) extends Attr
+  case class Float(title: Title) extends Attr
+  case class Text(title: Title, length: Int) extends Attr
+  case class OneToOne(title: Title, rm: ReferenceModel) extends Attr
+  case class OneToMany(title: Title, rm: ReferenceModel) extends Attr
+  case class ManyToMany(title: Title, rm: ReferenceModel) extends Attr
+  case class Title(text: String)
 }
-case class Package(title: Title, models: List[Model]) extends Formula
-case class Model(title: Title, attrs: List[Attr]) extends Formula
-case class ReferenceModel(title: Title) extends Formula
-case class Attr() extends Formula
-case class Integer(title: Title) extends Attr
-case class Boolean(title: Title) extends Attr
-case class Float(title: Title) extends Attr
-case class Text(title: Title, length: Int) extends Attr
-case class OneToOne(title: Title, rm: ReferenceModel) extends Attr
-case class OneToMany(title: Title, rm: ReferenceModel) extends Attr
-case class ManyToMany(title: Title, rm: ReferenceModel) extends Attr
-case class Title(text: String)
-
