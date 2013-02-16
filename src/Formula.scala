@@ -1,6 +1,7 @@
+package silk {
 import scala.collection.mutable.ListBuffer
 
-package silk {
+
   
 abstract class Formula {
 
@@ -18,7 +19,7 @@ abstract class Formula {
 	  	    case Title(s) => {
 	  	      p.sendTitle(s);
 	  	      for (attr <- attrs) {
-	  	        compileHelper(attr, p);   
+	  	        compileHelper(attr, p);
 	  	      }
 	  	      p;
 	  	    }

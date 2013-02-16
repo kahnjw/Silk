@@ -2,113 +2,74 @@ package silk {
   class Parser {
 	def parse(a: Array[String]) = {
 	  
-	  def parseHelper(list: List[String], f: Formula): Formula = list match {
-	  	case head :: tail => {
-	  	  head match {
-	  	    case "package" => {
-	  	      tail match {
-	  	        case packageName :: newTail => {
-	  	          return parseHelper(newTail, Package(Title(packageName), Nil));
-	  	        }
-	  	        case _ => throw new Error("Package must have name")
-	  	      }
+	  def parseHelper(list: List[String], f: Formula): Formula = (list, f) match {
+	  	case ("package" :: name :: tail, f) => {
+	  	  return parseHelper(tail, Package(Title(name), Nil));
+	  	}
+	  	case ("model" :: name :: tail, Package(title,list)) => {
+	  	  val modelForm = Model(Title(name), Nil);
+	  	  return parseHelper(tail, Package(title, modelForm :: list));
+	  	}
+	  	case ("bool" :: name :: tail, Package(title, modelHead :: modelList)) => {
+	  	  val boolForm = Boolean(Title(name));
+	  	  modelHead match {
+	  	    case Model(title, attrList) => {
+	  	      return parseHelper(tail, Package(title, Model(title, boolForm :: attrList) :: modelList));
 	  	    }
-	  	    case "class" => {
-	  	      tail match {
-	  	        case className :: newTail => {
-	  	          f match {
-	  	            case Package(title, list) => {
-	  	              val modelForm = Model(Title(className), Nil);
-	  	              return parseHelper(newTail, Package(title, modelForm :: list));
-	  	            }
-	  	            case _ => throw new Error("Matching on: "+ f);
-	  	          }
-	  	          // return  parseHelper(newTail, Model(Title(className),List()));
-	  	        }
-	  	        case _ => throw new Error("Classes must be named")
-	  	      }
-	  	    }
-	  	    
-	  	    case "bool" => {
-	  	      tail match {
-	  	        case intName :: newTail => {
-	  	          val intForm = Boolean(Title(intName));
-	  	          f match {
-	  	            case Package(packageTitle, modelHead :: modelList) => {
-	  	              modelHead match {
-	  	                case Model(title, list) => {
-	  	                  return parseHelper(newTail, Package(packageTitle, Model(title, intForm :: list) :: modelList));
-	  	                }
-	  	                case _ => throw new Error("Got: " + f +" Required: Model(title, list)")
-	  	              }
-	  	            }
-	  	          	/*
-	  	            case Model(title, list) => {
-	  	          	  return parseHelper(newTail, Model(title, intForm :: list));
-	  	          	}*/
-	  	          	case _ => throw new Error("Got: " + f +" Required: Model(title, list)")
-	  	          }
-	  	          throw new Error("Attributes belong in classes")
-	  	        }
-	  	        case _ => throw new Error("Ints must be named")
-	  	      }
-	  	    }
-	  	    
-	  	    case "int" => {
-	  	      tail match {
-	  	        case intName :: newTail => {
-	  	          val intForm = Integer(Title(intName));
-	  	          f match {
-	  	            case Package(packageTitle, modelHead :: modelList) => {
-	  	              modelHead match {
-	  	                case Model(title, list) => {
-	  	                  return parseHelper(newTail, Package(packageTitle, Model(title, intForm :: list) :: modelList));
-	  	                }
-	  	                case _ => throw new Error("Got: " + f +" Required: Model(title, list)")
-	  	              }
-	  	            }
-	  	            /*
-	  	          	case Model(title, list) => {
-	  	          	  return parseHelper(newTail, Model(title, intForm :: list));
-	  	          	}*/
-	  	          	case _ => throw new Error("Got: " + f +" Required: Model(title, list)")
-	  	          }
-	  	          throw new Error("Attributes belong in classes")
-	  	        }
-	  	        case _ => throw new Error("Ints must be named")
-	  	      }
-	  	    }
-	  	    
-	  	    case "float" => {
-	  	      tail match {
-	  	        case intName :: newTail => {
-	  	          val intForm = Float(Title(intName));
-	  	          f match {
-	  	            case Package(packageTitle, modelHead :: modelList) => {
-	  	              modelHead match {
-	  	                case Model(title, list) => {
-	  	                  return parseHelper(newTail, Package(packageTitle, Model(title, intForm :: list) :: modelList));
-	  	                }
-	  	                case _ => throw new Error("Got: " + f +" Required: Model(title, list)")
-	  	              }
-	  	            }
-	  	            /*
-	  	          	case Model(title, list) => {
-	  	          	  return parseHelper(newTail, Model(title, intForm :: list));
-	  	          	}*/
-	  	          	case _ => throw new Error("Got: " + f +" Required: Model(title, list)")
-	  	          }
-	  	          throw new Error("Attributes belong in classes")
-	  	        }
-	  	        case _ => throw new Error("Ints must be named")
-	  	      }
-	  	    }
+	  	    case _ => throw new Error("bool must be placed in a model");
 	  	  }
 	  	}
-	  	case Nil => return f;
-	  	case _ => throw new Error("Syntax error - you broke it!")
+	  	case ("int" :: name :: tail, Package(title, modelHead :: modelList)) => {
+	  	  val boolForm = Integer(Title(name));
+	  	  modelHead match {
+	  	    case Model(modelTitle, attrList) => {
+	  	      return parseHelper(tail, Package(title, Model(modelTitle, boolForm :: attrList) :: modelList));
+	  	    }
+	  	    case _ => throw new Error("int must be placed in a model");
+	  	  }
+	  	}
+	  	case ("float" :: name :: tail, Package(title, modelHead :: modelList)) => {
+	  	  val boolForm = Float(Title(name));
+	  	  modelHead match {
+	  	    case Model(modelTitle, attrList) => {
+	  	      return parseHelper(tail, Package(title, Model(modelTitle, boolForm :: attrList) :: modelList));
+	  	    }
+	  	    case _ => throw new Error("float must be placed in a model");
+	  	  }
+	  	}
+	  	
+	  	case ("oneToOne" :: name :: refName :: tail, Package(title, modelHead :: modelList)) => {
+	  	  val oneToOneForm = OneToOne(Title(name), ReferenceModel(Title(refName)));
+	  	  modelHead match {
+	  	    case Model(modelTitle, attrList) => {
+	  	      return parseHelper(tail, Package(title, Model(modelTitle, oneToOneForm :: attrList) :: modelList));
+	  	    }
+	  	    case _ => throw new Error("oneToOne must be placed in a model");
+	  	  }
+	  	}
+	  	
+	  	case ("oneToMany" :: name :: refName :: tail, Package(title, modelHead :: modelList)) => {
+	  	  val oneToManyForm = OneToMany(Title(name), ReferenceModel(Title(refName)));
+	  	  modelHead match {
+	  	    case Model(modelTitle, attrList) => {
+	  	      return parseHelper(tail, Package(title, Model(modelTitle, oneToManyForm :: attrList) :: modelList));
+	  	    }
+	  	    case _ => throw new Error("oneToMany must be placed in a model");
+	  	  }
+	  	}
+	  	
+	  	case ("manyToMany" :: name :: refName :: tail, Package(title, modelHead :: modelList)) => {
+	  	  val manyToManyForm = ManyToMany(Title(name), ReferenceModel(Title(refName)));
+	  	  modelHead match {
+	  	    case Model(modelTitle, attrList) => {
+	  	      return parseHelper(tail, Package(title, Model(modelTitle, manyToManyForm :: attrList) :: modelList));
+	  	    }
+	  	    case _ => throw new Error("manyToMany must be placed in a model");
+	  	  }
+	  	}
+	  	case (Nil, _) => return f;
+	  	case (err :: rest, _) => throw new Error("Unknown type: " + err);
 	  }
-	  
 	  var list = a.elements.toList;
 	  parseHelper(list, null);
 	}
