@@ -1,19 +1,18 @@
 package silk {
-import scala.collection.mutable.ListBuffer
-
-
+  import scala.collection.mutable.ListBuffer
   
-abstract class Formula {
-
-	def compile(p: Printer):Printer = {
+  abstract class Formula {
+	def compile(p: Printer): Printer = {
 	  def compileHelper(f: Formula, p: Printer):Printer = f match {
 	    case Package(Title(string), models) => {
 	      p.sendPackage(string);
 	      for(model <- models) {
 	        compileHelper(model, p);
 	      }
-	      p;
+	     p.sendEndPackage();
+	     p;
 	    }
+	    /* CASE IS MODEL ***/
 	  	case Model(title, attrs) => {
 	  	  title match {
 	  	    case Title(s) => {
@@ -21,6 +20,7 @@ abstract class Formula {
 	  	      for (attr <- attrs) {
 	  	        compileHelper(attr, p);
 	  	      }
+	  	      p.sendEndModel();
 	  	      p;
 	  	    }
 	  	    case _ => throw new Error("Type mismatch in compile -> Model")
@@ -97,10 +97,9 @@ abstract class Formula {
 	  	  case _ => throw new Error("Type mismatch in compile -> Attr")
 	  	}
 	  }
-	  var p = new Python();
-	  compileHelper(this, p);
-	  p.printer();
-	  p;
+	  // var p = new Python();
+	  compileHelper(this, p).printer();
+	  return p;
 	}
   }
   case class Package(title: Title, models: List[Model]) extends Formula

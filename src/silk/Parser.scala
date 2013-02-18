@@ -6,10 +6,12 @@ package silk {
 	  	case ("package" :: name :: tail, f) => {
 	  	  return parseHelper(tail, Package(Title(name), Nil));
 	  	}
+	  	
 	  	case ("model" :: name :: tail, Package(title,list)) => {
 	  	  val modelForm = Model(Title(name), Nil);
 	  	  return parseHelper(tail, Package(title, modelForm :: list));
 	  	}
+	  	
 	  	case ("bool" :: name :: tail, Package(title, modelHead :: modelList)) => {
 	  	  val boolForm = Boolean(Title(name));
 	  	  modelHead match {
@@ -19,6 +21,7 @@ package silk {
 	  	    case _ => throw new Error("bool must be placed in a model");
 	  	  }
 	  	}
+	  	
 	  	case ("int" :: name :: tail, Package(title, modelHead :: modelList)) => {
 	  	  val intForm = Integer(Title(name));
 	  	  modelHead match {
@@ -28,6 +31,7 @@ package silk {
 	  	    case _ => throw new Error("int must be placed in a model");
 	  	  }
 	  	}
+	  	
 	  	case ("float" :: name :: tail, Package(title, modelHead :: modelList)) => {
 	  	  val floatForm = Float(Title(name));
 	  	  modelHead match {
@@ -67,6 +71,7 @@ package silk {
 	  	    case _ => throw new Error("manyToMany must be placed in a model");
 	  	  }
 	  	}
+	  	
 	  	case (Nil, _) => return f;
 	  	case (err :: rest, _) => throw new Error("Unknown type: " + err);
 	  }
