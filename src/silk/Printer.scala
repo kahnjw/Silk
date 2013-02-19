@@ -184,7 +184,7 @@ package silk {
 	    pline("\"title\": \"" + ms + "\",\n");
 	    pline("\"reference\": \"" + rs + "\",\n");
 	    this.indentCount -= 1;
-	    pline("}\n");
+	    pline("},\n");
 	  }
 	  
 	  def sendOneToMany(ms: String, rs: String) {
@@ -194,7 +194,7 @@ package silk {
 	    pline("\"title\": \"" + ms + "\",\n");
 	    pline("\"reference\": \"" + rs + "\",\n");
 	    this.indentCount -= 1;
-	    pline("}\n");
+	    pline("},\n");
 	  }
 	  
 	  def sendManyToMany(ms: String, rs: String) {
@@ -204,7 +204,7 @@ package silk {
 	    pline("\"title\": \"" + ms + "\",\n");
 	    pline("\"reference\": \"" + rs + "\",\n");
 	    this.indentCount -= 1;
-	    pline("}\n");
+	    pline("},\n");
 	  }
 	  
 	  def defaults():String = {

@@ -9,8 +9,8 @@ package silk {
 	      for(model <- models) {
 	        compileHelper(model, p);
 	      }
-	     p.sendEndPackage();
-	     p;
+	      p.sendEndPackage();
+	      p;
 	    }
 	    /* CASE IS MODEL ***/
 	  	case Model(title, attrs) => {
@@ -97,7 +97,6 @@ package silk {
 	  	  case _ => throw new Error("Type mismatch in compile -> Attr")
 	  	}
 	  }
-	  // var p = new Python();
 	  compileHelper(this, p).printer();
 	  return p;
 	}

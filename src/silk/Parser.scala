@@ -1,8 +1,34 @@
 package silk {
-  class Parser {
-	def parse(a: Array[String]) = {
-	  
-	  def parseHelper(list: List[String], f: Formula): Formula = (list, f) match {
+  abstract class Parser {
+    def parse(a: Array[String]):Formula;
+    def parse(list: List[String]):Formula
+    
+    def guessAndCompile(a: Array[String]): Printer = {
+      def guessHelper(list: List[String]): Printer = list match {
+        case "from" :: "silk" :: "to" :: "python" :: tail => {
+          var parser:Parser = new SilkParser();
+          return parser.parse(tail).compile(new Python());
+        }
+        case "from" :: "silk" :: "to" :: "json" :: tail => {
+          var parser:Parser = new SilkParser();
+          return parser.parse(tail).compile(new Json());
+        }
+      	case _ => throw new Error("Printer options are \"python\" and \"json\"");
+      }
+      var list = a.elements.toList;
+	  return guessHelper(list);
+    }
+    
+  }
+  case class SilkParser() extends Parser {
+    def parse(list: List[String]):Formula = {
+      return parseHelper(list, null);
+    }
+    def parse(a: Array[String]): Formula = {
+	  var list = a.elements.toList;
+	  return parseHelper(list, null);
+	}
+    def parseHelper(list: List[String], f: Formula): Formula = (list, f) match {
 	  	case ("package" :: name :: tail, f) => {
 	  	  return parseHelper(tail, Package(Title(name), Nil));
 	  	}
@@ -75,8 +101,5 @@ package silk {
 	  	case (Nil, _) => return f;
 	  	case (err :: rest, _) => throw new Error("Unknown type: " + err);
 	  }
-	  var list = a.elements.toList;
-	  parseHelper(list, null);
-	}
   }
 }
