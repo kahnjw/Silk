@@ -1,3 +1,10 @@
+/*
+ * Abstract Class Formula implements an a compiler that takes
+ * nested case classes of type Formula, performs type checking 
+ * and then calls a printer to print the code to a file.
+ * Printer type has been implemented for Python and Json.
+ */
+
 package silk {
   import scala.collection.mutable.ListBuffer
   
