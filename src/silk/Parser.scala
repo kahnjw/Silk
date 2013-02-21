@@ -5,7 +5,7 @@ package silk {
 	 * Concrete implementations of the parser are implemented for 
 	 * Silk (SilkParser) and Json (JsonParser).
 	 * 
-	 * The Parser also checks for syntax correctness.
+	 * Parser also checks for syntax correctness.
 	 */
 	 
   abstract class Parser {
