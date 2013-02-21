@@ -1,7 +1,7 @@
 import sys.process._
 import java.io._
 package silk {
-	/* Abstract class Printer defines an interface which a compuler may
+	/* Abstract class Printer defines an interface which a compiler may
 	 * use to print code to a file. Concrete implementations of the 
 	 * printer implemented in Python and Json.
 	 */
