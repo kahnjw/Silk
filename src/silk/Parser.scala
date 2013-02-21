@@ -4,6 +4,8 @@ package silk {
 	 * representation (Formula) that the Silk compile may use.
 	 * Concrete implementations of the parser are implemented for 
 	 * Silk (SilkParser) and Json (JsonParser).
+	 * 
+	 * The Parser also checks for syntax correctness.
 	 */
 	 
   abstract class Parser {
