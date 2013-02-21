@@ -1,4 +1,11 @@
 package silk {
+	/* Abstract class Parser defines a small interface that may be 
+	 * used to parse user input and translate it to an internal 
+	 * representation (Formula) that the Silk compile may use.
+	 * Concrete implementations of the parser are implemented for 
+	 * Silk (SilkParser) and Json (JsonParser).
+	 */
+	 
   abstract class Parser {
     def parse(a: Array[String]):Formula;
     def parse(list: List[String]):Formula
